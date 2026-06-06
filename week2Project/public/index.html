@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>ShopHub - Online Shopping</title>
+
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,
+    %3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50%25' y='50%25' 
+    text-anchor='middle' dy='.35em' font-size='80'%3E🛒%3C/text%3E%3C/svg%3E">
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzen
+    r0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAADJSURBVFhH7ZPLDcIwEER3lEALlEAL
+    lEALlEALlEALlEALlJBvybKcrJ0khQPSjLSKvX5eW6vY2NjY2PwVIXgv53meNVlJwIko55xUVVUNhBC2xJg8pD2HwljbtvVJCFG11p
+    KrqipV13UthLirZVnWWZblyBhjCCF+hm3bnrIsC2utHfbhGIZhIoR8Ydd17+waDAYhhBgIIZ9YlmXmnFvgn0opHQghb7Bt29M4jqMA
+    +PY67nmen9u2ffpLbGxsbP4dX3XUr26f4R97AAAAAElFTkSuQmCC">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .logo span {
+            color: #ffd700;
+        }
+        
+        .cart-icon {
+            position: relative;
+            cursor: pointer;
+            font-size: 28px;
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: -10px;
+            right: -15px;
+            background: #ff4757;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 8px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 20px;
+        }
+        
+        .products-section {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .section-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .product-card {
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 15px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid #eee;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .product-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .product-category {
+            font-size: 12px;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .product-price {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2e7d32;
+            margin-bottom: 10px;
+        }
+        
+        .product-stock {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .product-stock.low {
+            color: #ff9800;
+        }
+        
+        .product-stock.out {
+            color: #f44336;
+        }
+        
+        .quantity-input {
+            width: 60px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            margin-right: 10px;
+        }
+        
+        .add-to-cart-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.2s;
+        }
+        
+        .add-to-cart-btn:hover {
+            background: #5a67d8;
+        }
+        
+        .add-to-cart-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .admin-section {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .admin-section h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .admin-form input, .admin-form select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .admin-form button {
+            background: #48bb78;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .cart-section {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .cart-items {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .cart-item-info {
+            flex: 1;
+        }
+        
+        .cart-item-name {
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .cart-item-price {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .cart-item-quantity {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .cart-item-quantity input {
+            width: 50px;
+            padding: 3px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        
+        .cart-item-total {
+            font-weight: bold;
+            color: #2e7d32;
+            min-width: 70px;
+            text-align: right;
+        }
+        
+        .remove-btn {
+            background: #f56565;
+            color: white;
+            border: none;
+            padding: 3px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 10px;
+            margin-left: 10px;
+        }
+        
+        .cart-total {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 2px solid #ddd;
+            font-size: 20px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .checkout-btn {
+            background: #48bb78;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        
+        .checkout-btn:hover {
+            background: #38a169;
+        }
+        
+        .checkout-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .empty-cart {
+            text-align: center;
+            color: #999;
+            padding: 40px;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            min-width: 300px;
+            max-width: 400px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            color: white;
+            z-index: 1000;
+            animation: slideDown 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+        
+        .notification.success {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        }
+        
+        .notification.error {
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+        }
+        
+        .notification.info {
+            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+        }
+        
+        .notification-content {
+            flex: 1;
+            font-size: 14px;
+        }
+        
+        .notification-close {
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            opacity: 0.8;
+        }
+        
+        .notification-close:hover {
+            opacity: 1;
+        }
+        
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .confirmation-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .confirmation-dialog {
+            background: white;
+            border-radius: 15px;
+            width: 400px;
+            max-width: 90%;
+            animation: zoomIn 0.2s ease;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        @keyframes zoomIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .confirmation-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .confirmation-body {
+            padding: 20px;
+            color: #666;
+            line-height: 1.5;
+        }
+        
+        .confirmation-buttons {
+            padding: 15px 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .confirmation-buttons button {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .confirmation-cancel {
+            background: #e0e0e0;
+            color: #333;
+        }
+        
+        .confirmation-confirm {
+            background: #48bb78;
+            color: white;
+        }
+        
+        .confirmation-confirm.danger {
+            background: #f56565;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            background: #e0e0e0;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        .tab.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .admin-panel {
+            display: none;
+        }
+        
+        .admin-panel.active {
+            display: block;
+        }
+        
+        .products-panel {
+            display: block;
+        }
+        
+        .products-panel.hide {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            .cart-section {
+                position: static;
+            }
+            .notification {
+                top: 70px;
+                right: 10px;
+                left: 10px;
+                min-width: auto;
+                max-width: none;
+            }
+        }
+
+        .cart-section {
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .cart-section.hide {
+            display: none;
+       }
+
+       .cart-section.show {
+            display: block;
+            animation: slideInRight 0.3s ease;
+       }
+
+        @keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(100%);
+            }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">
+                🛒 Shop<span>Hub</span>
+            </div>
+            <div class="cart-icon" onclick="toggleCart()">
+                🛍️ My Products
+                <span class="cart-count" id="cartCount">0</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div>
+            <div class="products-section">
+                <div class="tabs">
+                    <button class="tab active" onclick="showPanel('products')">🛍️ Products</button>
+                    <button class="tab" onclick="showPanel('admin')">⚙️ Admin Settings</button>
+                </div>
+                
+                <div id="productsPanel" class="products-panel">
+                    <h2 class="section-title">Products Here</h2>
+                    <div class="products-grid" id="productsGrid">
+                    </div>
+                </div>
+                
+                <div id="adminPanel" class="admin-panel">
+                    <div class="admin-section">
+                        <h3>➕ Add New Product</h3>
+                        <form id="productForm" class="admin-form">
+                            <input type="text" id="productName" placeholder="Product Name" required>
+                            <input type="number" id="productPrice" step="0.01" placeholder="Price (Rs.)" required>
+                            <select id="productCategory">
+                                <option value="Fruits">Fruits</option>
+                                <option value="Vegetables">Vegetables</option>
+                                <option value="Dairy">Dairy</option>
+                                <option value="Bakery">Bakery</option>
+                                <option value="Meat">Meat</option>
+                                <option value="Beverages">Beverages</option>
+                                <option value="Grains">Grains</option>
+                            </select>
+                            <input type="number" id="productStock" placeholder="Stock Quantity" required>
+                            <button type="submit">➕ Add Product</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="cart-section" id="cartSection">
+            <h2 class="section-title">🛒 Your Cart</h2>
+            <div id="cartItems" class="cart-items">
+                <div class="empty-cart">Your cart is empty</div>
+            </div>
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cartTotal">Rs. 0.00</span>
+            </div>
+            <button class="checkout-btn" id="checkoutBtn" onclick="showCheckoutConfirmation()">Proceed to Checkout</button>
+        </div>
+    </div>
+    
+    <div id="notificationContainer"></div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        
+        function toggleCart() {
+            const cartSection = document.getElementById('cartSection');
+    
+            if (cartSection.classList.contains('hide')) {
+                cartSection.classList.remove('hide');
+                cartSection.classList.add('show');
+                showNotification('Cart opened', 'info');
+            } else {
+                cartSection.classList.add('hide');
+                cartSection.classList.remove('show');
+                showNotification('Cart closed', 'info');
+            }
+        }
+
+        function showNotification(message, type = 'success') {
+            const container = document.getElementById('notificationContainer');
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            
+            const icon = type === 'success' ? '' : (type === 'error' ? '❌' : '');
+            
+            notification.innerHTML = `
+                <div class="notification-content">${icon} ${message}</div>
+                <div class="notification-close" onclick="this.parentElement.remove()">✕</div>
+            `;
+            
+            container.appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 4000);
+        }
+        
+        
+        function showConfirmation(options) {
+            return new Promise((resolve) => {
+                const overlay = document.createElement('div');
+                overlay.className = 'confirmation-overlay';
+                
+                overlay.innerHTML = `
+                    <div class="confirmation-dialog">
+                        <div class="confirmation-header">${options.title || 'Confirm Action'}</div>
+                        <div class="confirmation-body">${options.message || 'Are you sure?'}</div>
+                        <div class="confirmation-buttons">
+                            <button class="confirmation-cancel">${options.cancelText || 'Cancel'}</button>
+                            <button class="confirmation-confirm ${options.danger ? 'danger' : ''}">${options.confirmText || 'Confirm'}</button>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(overlay);
+                
+                const cancelBtn = overlay.querySelector('.confirmation-cancel');
+                const confirmBtn = overlay.querySelector('.confirmation-confirm');
+                
+                cancelBtn.addEventListener('click', () => {
+                    overlay.remove();
+                    resolve(false);
+                });
+                
+                confirmBtn.addEventListener('click', () => {
+                    overlay.remove();
+                    resolve(true);
+                });
+                
+                overlay.addEventListener('click', (e) => {
+                    if (e.target === overlay) {
+                        overlay.remove();
+                        resolve(false);
+                    }
+                });
+            });
+        }
+        
+        
+        function showPanel(panel) {
+            const productsPanel = document.getElementById('productsPanel');
+            const adminPanel = document.getElementById('adminPanel');
+            const tabs = document.querySelectorAll('.tab');
+            
+            if (panel === 'products') {
+                productsPanel.classList.remove('hide');
+                adminPanel.classList.remove('active');
+                tabs[0].classList.add('active');
+                tabs[1].classList.remove('active');
+            } else {
+                productsPanel.classList.add('hide');
+                adminPanel.classList.add('active');
+                tabs[0].classList.remove('active');
+                tabs[1].classList.add('active');
+            }
+        }
+        
+        function scrollToCart() {
+            document.querySelector('.cart-section').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        async function loadProducts() {
+            try {
+                const response = await fetch(`${API_URL}/products`);
+                const products = await response.json();
+                
+                const productsGrid = document.getElementById('productsGrid');
+                
+                if (products.length === 0) {
+                    productsGrid.innerHTML = '<p>No products available. Add some in Admin panel!</p>';
+                    return;
+                }
+                
+                productsGrid.innerHTML = products.map(product => `
+                    <div class="product-card">
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-category">🔹${product.category}</div>
+                        <div class="product-price">Rs. ${product.price.toFixed(2)}</div>
+                        <div class="product-stock ${product.stock < 10 ? 'low' : ''} ${product.stock === 0 ? 'out' : ''}">
+                            ${product.stock > 0 ? `📦 In Stock: ${product.stock}` : '❌ Out of Stock'}
+                        </div>
+                        <div>
+                            <input type="number" id="qty-${product.id}" value="1" min="1" max="${product.stock}" class="quantity-input" ${product.stock === 0 ? 'disabled' : ''}>
+                            <button class="add-to-cart-btn" onclick="showAddToCartConfirmation(${product.id}, '${product.name}')" ${product.stock === 0 ? 'disabled' : ''}>
+                                🛒 Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                showNotification('Error loading products', 'error');
+            }
+        }
+        
+        
+        document.getElementById('productForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const product = {
+                name: document.getElementById('productName').value,
+                price: parseFloat(document.getElementById('productPrice').value),
+                category: document.getElementById('productCategory').value,
+                stock: parseInt(document.getElementById('productStock').value)
+            };
+            
+            try {
+                const response = await fetch(`${API_URL}/products`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(product)
+                });
+                
+                if (response.ok) {
+                    showNotification('Product added successfully!', 'success');
+                    document.getElementById('productForm').reset();
+                    loadProducts();
+                } else {
+                    const error = await response.json();
+                    showNotification(error.error, 'error');
+                }
+            } catch (error) {
+                showNotification('Error adding product', 'error');
+            }
+        });
+        
+        
+        async function showAddToCartConfirmation(productId, productName) {
+            const quantityInput = document.getElementById(`qty-${productId}`);
+            const quantity = parseInt(quantityInput.value);
+            
+            const confirmed = await showConfirmation({
+                title: '🛒 Add to Cart',
+                message: `Do you want to add ${quantity} x "${productName}" to your cart?`,
+                confirmText: 'Add',
+                cancelText: 'Cancel'
+            });
+            
+            if (confirmed) {
+                await addToCart(productId, quantity);
+            }
+        }
+        
+        async function addToCart(productId, quantity) {
+            try {
+                const response = await fetch(`${API_URL}/cart`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ productId, quantity })
+                });
+                
+                if (response.ok) {
+                    showNotification(`Added ${quantity} item(s) to cart! Stock updated.`, 'success');
+                    loadCart();
+                    loadProducts();
+                } else {
+                    const error = await response.json();
+                    showNotification(error.error, 'error');
+                }
+            } catch (error) {
+                showNotification('Error adding to cart', 'error');
+            }
+        }
+        
+        async function loadCart() {
+            try {
+                const response = await fetch(`${API_URL}/cart`);
+                const cart = await response.json();
+                
+                const cartItemsDiv = document.getElementById('cartItems');
+                const cartCount = document.getElementById('cartCount');
+                const checkoutBtn = document.getElementById('checkoutBtn');
+                
+                cartCount.textContent = cart.length;
+                
+                if (cart.length === 0) {
+                    cartItemsDiv.innerHTML = '<div class="empty-cart">Your cart is empty</div>';
+                    document.getElementById('cartTotal').innerHTML = 'Rs. 0.00';
+                    return;
+                }
+                
+                let total = 0;
+                cartItemsDiv.innerHTML = cart.map(item => {
+                    total += item.total;
+                    return `
+                        <div class="cart-item">
+                            <div class="cart-item-info">
+                                <div class="cart-item-name">${item.name}</div>
+                                <div class="cart-item-price">Rs. ${item.price.toFixed(2)} each</div>
+                            </div>
+                            <div class="cart-item-quantity">
+                                <input type="number" value="${item.quantity}" min="1" onchange="showUpdateCartConfirmation(${item.id}, this.value)">
+                                <div class="cart-item-total">Rs. ${item.total.toFixed(2)}</div>
+                                <button class="remove-btn" onclick="showRemoveFromCartConfirmation(${item.id}, '${item.name}')">✕</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                document.getElementById('cartTotal').innerHTML = `Rs. ${total.toFixed(2)}`;
+            } catch (error) {
+                showNotification('Error loading cart', 'error');
+            }
+        }
+        
+        async function showUpdateCartConfirmation(cartId, newQuantity) {
+            newQuantity = parseInt(newQuantity);
+            if (newQuantity < 1) newQuantity = 1;
+            
+            const confirmed = await showConfirmation({
+                title: '📦 Update Quantity',
+                message: `Do you want to update quantity to ${newQuantity}?`,
+                confirmText: 'Update',
+                cancelText: 'Cancel'
+            });
+            
+            if (confirmed) {
+                await updateCartItem(cartId, newQuantity);
+            } else {
+                loadCart(); 
+            }
+        }
+        
+        async function updateCartItem(cartId, quantity) {
+            try {
+                const response = await fetch(`${API_URL}/cart/${cartId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ quantity })
+                });
+                
+                if (response.ok) {
+                    showNotification('Cart updated! Stock adjusted.', 'success');
+                    loadCart();
+                    loadProducts();
+                } else {
+                    const error = await response.json();
+                    showNotification(error.error, 'error');
+                    loadCart();
+                }
+            } catch (error) {
+                showNotification('Error updating cart', 'error');
+            }
+        }
+        
+        async function showRemoveFromCartConfirmation(cartId, productName) {
+            const confirmed = await showConfirmation({
+                title: '🗑️ Remove Item',
+                message: `Do you want to remove "${productName}" from your cart?`,
+                confirmText: 'Remove',
+                cancelText: 'Cancel',
+                danger: true
+            });
+            
+            if (confirmed) {
+                await removeFromCart(cartId);
+            }
+        }
+        
+        async function removeFromCart(cartId) {
+            try {
+                const response = await fetch(`${API_URL}/cart/${cartId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    showNotification('Item removed from cart! Stock returned.', 'success');
+                    loadCart();
+                    loadProducts();
+                }
+            } catch (error) {
+                showNotification('Error removing item', 'error');
+            }
+        }
+        
+        async function showCheckoutConfirmation() {
+            const cartTotal = document.getElementById('cartTotal').innerText;
+            
+            const confirmed = await showConfirmation({
+                title: 'Confirm Checkout',
+                message: `Are you sure you want to place your order? Total amount: ${cartTotal}`,
+                confirmText: 'Place Order',
+                cancelText: 'Cancel',
+                danger: false
+            });
+            
+            if (confirmed) {
+                await checkout();
+            }
+        }
+        
+        async function checkout() {
+            try {
+                const response = await fetch(`${API_URL}/cart/checkout`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    showNotification(`Order placed successfully! Total: Rs. ${result.order.total.toFixed(2)}`, 'success');
+                    loadCart();
+                    loadProducts();
+                } else {
+                    const error = await response.json();
+                    showNotification(error.error, 'error');
+                }
+            } catch (error) {
+                showNotification('Error during checkout', 'error');
+            }
+        }
+        loadProducts();
+        loadCart();
+    </script>
+</body>
+</html>
